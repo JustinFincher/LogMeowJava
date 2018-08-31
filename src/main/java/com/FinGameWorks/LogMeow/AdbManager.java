@@ -4,11 +4,11 @@ import se.vidstige.jadb.JadbConnection;
 import se.vidstige.jadb.JadbDevice;
 import se.vidstige.jadb.JadbException;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.InputStreamReader;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,13 +34,34 @@ public enum  AdbManager {
                             device.setJadbDevice(jadbDevice);
                             return device;
                         }).collect(Collectors.toList());
-                    } catch (IOException e) {
+                    } catch (IOException | JadbException e) {
                         e.printStackTrace();
-                    } catch (JadbException e) {
-                        e.printStackTrace();
+                        startADB();
                     }
                 }
             }
         }, 0, 2*1000);
+    }
+
+    private void startADB()
+    {
+        boolean issue = false;
+        try {
+            String userPath = System.getenv("PATH");
+            LogManager.INSTANCE.logger.info(userPath);
+            String[] command = OSUtilities.isWindows() ? new String[]{"cmd.exe", "/c", "adb start-server"} : new String[]{"/bin/bash", "-c", "-l", "adb start-server"};
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            pb.start();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            issue = true;
+        }finally {
+            if (!issue)
+            {
+                Application.Restart();
+            }
+        }
     }
 }
