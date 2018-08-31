@@ -1,6 +1,7 @@
 package com.FinGameWorks.LogMeow;
 
 import glm_.vec2.Vec2;
+import glm_.vec4.Vec4;
 import imgui.*;
 import se.vidstige.jadb.JadbDevice;
 import se.vidstige.jadb.JadbException;
@@ -116,10 +117,13 @@ public enum  GUIManager {
             {
                 boolean[] hoveredDetailWindowShown = {hovered};
                 imgui.setNextWindowPos(imgui.getMousePos(),Cond.Always,new Vec2(-0.02,-0.02));
+                imgui.setNextWindowBgAlpha(0.4f);
                 imgui.setNextWindowFocus();
                 if (imgui.begin("getprop", hoveredDetailWindowShown, WindowFlag.NoSavedSettings.getI() | WindowFlag.AlwaysAutoResize.getI()))
                 {
+                    imgui.pushStyleColor(Col.Text, new Vec4(1.0f,1.0f,1.0f, 0.4f));
                     imgui.text(device.allProp);
+                    imgui.popStyleColor(1);
                     imgui.end();
                 }
             }

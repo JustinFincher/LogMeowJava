@@ -54,8 +54,8 @@ public enum  AdbManager {
             pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
             pb.start();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
             issue = true;
         }finally {
             if (!issue)
