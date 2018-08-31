@@ -38,8 +38,12 @@ public class Application
                 return;
             }
         }
-        try
-        {
+        Restart();
+    }
+
+    public static void Restart()
+    {
+        try {
             ProcessBuilder pb = new ProcessBuilder();
             if (OSUtilities.isMac())
             {
@@ -50,18 +54,12 @@ public class Application
             }
             pb.inheritIO();
             pb.start();
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }finally {
             System.exit(0);
         }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch(URISyntaxException e)
-        {
-            e.printStackTrace();
-        }
     }
-
     public Application()
     {
         AdbManager adbManager = AdbManager.INSTANCE;
