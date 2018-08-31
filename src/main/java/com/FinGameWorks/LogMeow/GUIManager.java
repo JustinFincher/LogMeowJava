@@ -1,9 +1,11 @@
 package com.FinGameWorks.LogMeow;
 
-import imgui.ImGui;
-import imgui.WindowFlag;
+import glm_.vec2.Vec2;
+import imgui.*;
 import se.vidstige.jadb.JadbDevice;
+import se.vidstige.jadb.JadbException;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.function.Consumer;
@@ -81,13 +83,49 @@ public enum  GUIManager {
 
     private void drawDeviceWindow(ImGui imgui)
     {
-        imgui.begin("Devices", devicesWindowShown, WindowFlag.None.getI());
+        imgui.begin("Devices", devicesWindowShown, WindowFlag.MenuBar.getI());
 
-        AdbManager.INSTANCE.devices.stream().forEach(jadbDevice ->
-        {imgui.text(jadbDevice.getSerial());
-        })  ;
+        if(imgui.beginMenuBar())
+        {
+            imgui.text("Device Count: " + AdbManager.INSTANCE.devices.size());
+            imgui.endMenuBar();
+        }
+        imgui.columns(6, "devices", true);
+        imgui.separator();
+        imgui.text("Serial"); imgui.nextColumn();
+        imgui.text("Brand"); imgui.nextColumn();
+        imgui.text("Model"); imgui.nextColumn();
+        imgui.text("OS"); imgui.nextColumn();
+        imgui.text("State"); imgui.nextColumn();
+        imgui.text("Extras"); imgui.nextColumn();
+        imgui.separator();
 
 
+        AdbManager.INSTANCE.devices.stream().forEach(device ->
+        {
+            boolean hovered = false;
+            imgui.text(device.serial); imgui.nextColumn();
+            imgui.text(device.brand); imgui.nextColumn();
+            imgui.text(device.model); imgui.nextColumn();
+            imgui.text(device.osVersion + " (API " + device.apiLevel + ")"); imgui.nextColumn();
+            imgui.text(device.state); imgui.nextColumn();
+            imgui.text("  ");
+            hovered = hovered || imgui.isItemHovered(HoveredFlag.AnyWindow);
+            imgui.nextColumn();
+            if (hovered)
+            {
+                boolean[] hoveredDetailWindowShown = {hovered};
+                imgui.setNextWindowPos(imgui.getMousePos(),Cond.Always,new Vec2(-0.02,-0.02));
+                imgui.setNextWindowFocus();
+                if (imgui.begin("getprop", hoveredDetailWindowShown, WindowFlag.NoSavedSettings.getI() | WindowFlag.AlwaysAutoResize.getI()))
+                {
+                    imgui.text(device.allProp);
+                    imgui.end();
+                }
+            }
+
+            imgui.separator();
+        });
         imgui.end();
     }
 }

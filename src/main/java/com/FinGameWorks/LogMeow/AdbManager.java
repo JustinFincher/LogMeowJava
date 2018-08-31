@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum  AdbManager {
     INSTANCE;
 
-    public List<JadbDevice> devices;
+    public List<Device> devices;
     public JadbConnection jadb;
     private Timer timer = new Timer();
 
@@ -26,7 +28,12 @@ public enum  AdbManager {
                 if (jadb != null)
                 {
                     try {
-                        devices = jadb.getDevices();
+                        devices = jadb.getDevices().stream().map(jadbDevice ->
+                        {
+                            Device device = new Device();
+                            device.setJadbDevice(jadbDevice);
+                            return device;
+                        }).collect(Collectors.toList());
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (JadbException e) {
