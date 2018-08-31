@@ -7,9 +7,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4ff4345-f58b-494c-bdd4-cad8a1fdf3ed" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/LogMeow_main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/LogMeow_main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/LogMeow_test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/LogMeow_test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classes/artifacts/LogMeow_main_jar/LogMeow_main.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/imgui.ini" beforeDir="false" afterPath="$PROJECT_DIR$/imgui.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/GUIManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/GUIManager.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -129,7 +134,7 @@
           <entry key="MF" value="3" />
           <entry key="class" value="3" />
           <entry key="gradle" value="3" />
-          <entry key="java" value="3" />
+          <entry key="java" value="4" />
           <entry key="kt" value="1" />
           <entry key="ttf" value="1" />
         </counts>
@@ -139,21 +144,21 @@
           <entry key="CLASS" value="3" />
           <entry key="Font" value="1" />
           <entry key="Groovy" value="3" />
-          <entry key="JAVA" value="3" />
+          <entry key="JAVA" value="4" />
           <entry key="Kotlin" value="1" />
           <entry key="Manifest" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="gradle" value="183" />
-          <entry key="java" value="2250" />
+          <entry key="gradle" value="197" />
+          <entry key="java" value="2593" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Groovy" value="183" />
-          <entry key="JAVA" value="2250" />
+          <entry key="Groovy" value="197" />
+          <entry key="JAVA" value="2593" />
         </counts>
       </usages-collector>
     </session>
@@ -163,8 +168,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="47" column="62" selection-start-line="47" selection-start-column="62" selection-end-line="47" selection-end-column="62" />
+            <state relative-caret-position="354">
+              <caret line="46" column="14" lean-forward="true" selection-start-line="46" selection-start-column="14" selection-end-line="46" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -178,13 +183,27 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/Application.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="53" column="22" selection-start-line="53" selection-start-column="22" selection-end-line="53" selection-end-column="22" />
+            <state relative-caret-position="-946">
+              <caret line="45" column="84" lean-forward="true" selection-start-line="45" selection-start-column="84" selection-end-line="45" selection-end-column="84" />
               <folding>
                 <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/AdbManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="398">
+              <caret line="37" column="5" lean-forward="true" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#523#685#0" expanded="true" />
+                <element signature="e#684#685#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -193,8 +212,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/GUIManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="34" column="24" selection-start-line="34" selection-start-column="24" selection-end-line="34" selection-end-column="24" />
+            <state relative-caret-position="1376">
+              <caret line="86" column="9" selection-start-line="86" selection-start-column="9" selection-end-line="86" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -425,9 +444,9 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="4605943337000" />
+        <entry key="$PROJECT_DIR$" value="4605946028000" />
         <entry key="$PROJECT_DIR$/.gradle" value="0" />
-        <entry key="$PROJECT_DIR$/build.gradle" value="2528132372" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="3881817174" />
         <entry key="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" value="2371942159" />
         <entry key="$PROJECT_DIR$/settings.gradle" value="2044359618" />
       </map>
@@ -614,7 +633,9 @@
         <option value="$PROJECT_DIR$/src/main/kotlin/com/FinGameWorks/LogMeow/GUIManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/GUIManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/Application.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/AdbManager.java" />
       </list>
     </option>
   </component>
@@ -653,7 +674,52 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="LogMeow" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="LogMeow" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="LogMeow" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="LogMeow" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="LogMeow_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="LogMeow" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="LogMeow" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="LogMeow_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="LogMeow" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="LogMeow" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="LogMeow_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="LogMeow" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="LogMeow" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="LogMeow_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="FinGameWorks" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="LogMeow" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="LogMeow" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="LogMeow_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="FinGameWorks" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="LogMeow" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
@@ -715,7 +781,7 @@
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="logmeow" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1535740907769" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1535743722425" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/kotlin" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -817,12 +883,12 @@
       <option name="presentableId" value="Default" />
       <updated>1535706521370</updated>
       <workItem from="1535706525045" duration="13967000" />
-      <workItem from="1535737179547" duration="3663000" />
+      <workItem from="1535737179547" duration="5835000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17630000" />
+    <option name="totallyTimeSpent" value="19802000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-2" y="24" width="1680" height="947" extended-state="6" />
@@ -928,23 +994,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/META-INF/MANIFEST.MF" />
     <entry file="file://$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/LogManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="6" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/GUIManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="34" column="24" selection-start-line="34" selection-start-column="24" selection-end-line="34" selection-end-column="24" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
@@ -957,17 +1006,46 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="47" column="62" selection-start-line="47" selection-start-column="62" selection-end-line="47" selection-end-column="62" />
+        <state relative-caret-position="354">
+          <caret line="46" column="14" lean-forward="true" selection-start-line="46" selection-start-column="14" selection-end-line="46" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/GUIManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1376">
+          <caret line="86" column="9" selection-start-line="86" selection-start-column="9" selection-end-line="86" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/LogManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="6" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/Application.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="53" column="22" selection-start-line="53" selection-start-column="22" selection-end-line="53" selection-end-column="22" />
+        <state relative-caret-position="-946">
+          <caret line="45" column="84" lean-forward="true" selection-start-line="45" selection-start-column="84" selection-end-line="45" selection-end-column="84" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/FinGameWorks/LogMeow/AdbManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="398">
+          <caret line="37" column="5" lean-forward="true" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#523#685#0" expanded="true" />
+            <element signature="e#684#685#0" expanded="true" />
           </folding>
         </state>
       </provider>

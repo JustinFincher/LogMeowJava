@@ -38,11 +38,16 @@ public class Application
                 return;
             }
         }
-
         try
         {
             ProcessBuilder pb = new ProcessBuilder();
-            pb.command("java", "-jar", "-XstartOnFirstThread", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
+            if (System.getProperty("os.name").startsWith("Mac"))
+            {
+                pb.command("java", "-jar", "-XstartOnFirstThread", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
+            }else
+            {
+                pb.command("java", "-jar", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
+            }
             pb.inheritIO();
             pb.start();
             System.exit(0);
@@ -59,6 +64,8 @@ public class Application
 
     public Application()
     {
+        AdbManager adbManager = AdbManager.INSTANCE;
+
         glfw.init("4.1", windowHint.Profile.core, true);
         windowHint.INSTANCE.setDecorated(true);
         windowHint.INSTANCE.setResizable(true);

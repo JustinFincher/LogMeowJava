@@ -2,9 +2,11 @@ package com.FinGameWorks.LogMeow;
 
 import imgui.ImGui;
 import imgui.WindowFlag;
+import se.vidstige.jadb.JadbDevice;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Consumer;
 
 public enum  GUIManager {
     INSTANCE;
@@ -20,19 +22,22 @@ public enum  GUIManager {
                 imgui.endMenu();
             }
             drawTopLevelMenu(imgui);
+//            String fps = String.format("%.3f ms | %.1f FPS", 1_000f / imgui.getIo().getFramerate(), imgui.getIo().getFramerate());
+//            if (imgui.beginMenu(fps, false))
+//            {
+//                imgui.endMenu();
+//            }
             String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             if (imgui.beginMenu(date,false))
             {
                 imgui.endMenu();
             }
             imgui.endMainMenuBar();
-
         }
 
         if (devicesWindowShown[0])
         {
-            imgui.begin("Devices", devicesWindowShown, WindowFlag.None.getI());
-            imgui.end();
+            drawDeviceWindow(imgui);
         }
         if (demoWindowShown[0])
         {
@@ -72,5 +77,17 @@ public enum  GUIManager {
             }
             imgui.endMenu();
         }
+    }
+
+    private void drawDeviceWindow(ImGui imgui)
+    {
+        imgui.begin("Devices", devicesWindowShown, WindowFlag.None.getI());
+
+        AdbManager.INSTANCE.devices.stream().forEach(jadbDevice ->
+        {imgui.text(jadbDevice.getSerial());
+        })  ;
+
+
+        imgui.end();
     }
 }

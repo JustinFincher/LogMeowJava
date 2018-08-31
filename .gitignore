@@ -1,7 +1,7 @@
 
 
 *.log
-
+\.idea/libraries/
 \.gradle/
 gradle/
 classes/
