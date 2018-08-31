@@ -11,6 +11,9 @@ import kotlin.jvm.functions.Function0;
 import uno.glfw.GlfwWindow;
 import uno.glfw.windowHint;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -27,7 +30,31 @@ public class Application
 
     public static void main(String[] args)
     {
-        new Application();
+        for(String s : args)
+        {
+            if(s.equals("run"))
+            {
+                new Application();
+                return;
+            }
+        }
+
+        try
+        {
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("java", "-jar", "-XstartOnFirstThread", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
+            pb.inheritIO();
+            pb.start();
+            System.exit(0);
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        catch(URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public Application()

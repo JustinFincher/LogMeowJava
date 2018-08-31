@@ -1,9 +1,9 @@
 
-\.idea/
 
 *.log
 
 \.gradle/
 gradle/
+classes/
 out/
 build/

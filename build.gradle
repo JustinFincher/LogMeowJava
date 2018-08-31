@@ -46,20 +46,5 @@ task wrapper(type: Wrapper) {
 }
 dependencies {
     implementation 'com.github.kotlin-graphics:uno-sdk:v0.7.3'
-//    compile files("lib/imgui-light.jar")
     compile fileTree(dir: 'lib', include: '*.jar')
-//
-//    implementation(group:"org.lwjgl",name:"lwjgl",version:lwjglVersion)
-//    implementation(group:"org.lwjgl",name:"lwjgl-glfw",version:lwjglVersion)
-//    implementation(group:"org.lwjgl",name:"lwjgl-openal",version:lwjglVersion)
-//    implementation(group:"org.lwjgl",name:"lwjgl-opengl",version:lwjglVersion)
-//    implementation(group:"org.lwjgl",name:"lwjgl-stb",version:lwjglVersion)
-//    implementation(group:"org.lwjgl",name:"lwjgl-vulkan",version:lwjglVersion)
-//
-//    implementation(group:"org.lwjgl",name:"lwjgl",version:lwjglVersion, classifier:lwjglNatives)
-//    implementation(group:"org.lwjgl",name:"lwjgl-glfw",version:lwjglVersion, classifier:lwjglNatives)
-//    implementation(group:"org.lwjgl",name:"lwjgl-openal",version:lwjglVersion, classifier:lwjglNatives)
-//    implementation(group:"org.lwjgl",name:"lwjgl-opengl",version:lwjglVersion, classifier:lwjglNatives)
-//    implementation(group:"org.lwjgl",name:"lwjgl-stb",version:lwjglVersion, classifier:lwjglNatives)
-//    implementation(group:"org.lwjgl",name:"lwjgl-vulkan",version:lwjglVersion, classifier:lwjglNatives)
 }
