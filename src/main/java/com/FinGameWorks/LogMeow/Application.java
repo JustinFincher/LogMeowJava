@@ -107,7 +107,7 @@ public class Application
     }
 
 
-    private Vec4 clearColor = new Vec4(0.0f,0.0f,0.0f, 0.5f);
+    private Vec4 clearColor = OSUtilities.isWindows() ? new Vec4(0.2f,0.2f,0.2f, 1.0f) : new Vec4(0.0f,0.0f,0.0f, 0.5f);
 
     private void mainLoop() {
 
