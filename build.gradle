@@ -1,0 +1,56 @@
+import org.gradle.internal.os.OperatingSystem
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+repositories {
+    mavenCentral()
+    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
+    maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
+    maven { url 'https://jitpack.io' }
+}
+
+
+buildscript {
+
+    repositories {
+        jcenter()   // shadow
+        mavenCentral()
+        maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
+        maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.51"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath "org.junit.platform:junit-platform-gradle-plugin:1.1.0"
+    }
+}
+
+dependencies {
+
+    implementation 'com.github.kotlin-graphics:uno-sdk:v0.7.3'
+//    implementation 'com.google.flogger:flogger:0.3.1'
+    compile files("lib/imgui-light.jar")
+
+    ext.lwjglVersion = "3.2.0"
+    switch (OperatingSystem.current()) {
+        case OperatingSystem.WINDOWS:
+            ext.lwjglNatives = "natives-windows"
+            break
+        case OperatingSystem.LINUX:
+            ext.lwjglNatives = "natives-linux"
+            break
+        case OperatingSystem.MAC_OS:
+            ext.lwjglNatives = "natives-macos"
+            break
+    }
+    ["", "-glfw", "-jemalloc", "-openal", "-opengl", "-stb"].each {
+        String base = "org.lwjgl:lwjgl$it:$lwjglVersion"
+        implementation base
+        testRuntime "$base:$lwjglNatives"
+        shadow "$base:$lwjglNatives"
+    }
+}
