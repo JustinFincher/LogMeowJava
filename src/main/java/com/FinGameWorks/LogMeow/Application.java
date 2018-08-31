@@ -41,7 +41,7 @@ public class Application
         try
         {
             ProcessBuilder pb = new ProcessBuilder();
-            if (System.getProperty("os.name").startsWith("Mac"))
+            if (OSUtilities.isMac())
             {
                 pb.command("java", "-jar", "-XstartOnFirstThread", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
             }else
@@ -69,8 +69,7 @@ public class Application
         glfw.init("4.1", windowHint.Profile.core, true);
         windowHint.INSTANCE.setDecorated(true);
         windowHint.INSTANCE.setResizable(true);
-        windowHint.INSTANCE.setAutoIconify(true);
-        windowHint.INSTANCE.setTransparentFramebuffer(true);
+        windowHint.INSTANCE.setTransparentFramebuffer(!OSUtilities.isWindows());
 
         window = new GlfwWindow(800, 500, "LogMeow", NULL, new Vec2i(Integer.MIN_VALUE), true);
         window.init(true);
