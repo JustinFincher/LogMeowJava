@@ -56,9 +56,8 @@ public class Application
             pb.start();
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
-        }finally {
-            System.exit(0);
         }
+        System.exit(0);
     }
     public Application()
     {

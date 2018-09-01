@@ -1,6 +1,7 @@
 package com.FinGameWorks.LogMeow;
 
 import glm_.vec2.Vec2;
+import glm_.vec2.Vec2i;
 import glm_.vec4.Vec4;
 import imgui.*;
 import se.vidstige.jadb.JadbDevice;
@@ -16,6 +17,7 @@ public enum  GUIManager {
 
     public boolean[] devicesWindowShown = {true};
     public boolean[] demoWindowShown = {false};
+    public Device currentGetPropDevice;
     public void draw(ImGui imgui)
     {
         if (imgui.beginMainMenuBar())
@@ -50,12 +52,11 @@ public enum  GUIManager {
         {
             imgui.openPopup("blank_scene_context_menu");
         }
-        if (imgui.beginPopup("blank_scene_context_menu",0))
+        if (imgui.beginPopup("blank_scene_context_menu",WindowFlag.None.getI()))
         {
             drawTopLevelMenu(imgui);
             imgui.endPopup();
         }
-
     }
 
     private void drawTopLevelMenu(ImGui imgui)
@@ -105,13 +106,17 @@ public enum  GUIManager {
         AdbManager.INSTANCE.devices.stream().forEach(device ->
         {
             boolean hovered = false;
+            boolean clicked = false;
             imgui.text(device.serial); imgui.nextColumn();
             imgui.text(device.brand); imgui.nextColumn();
             imgui.text(device.model); imgui.nextColumn();
             imgui.text(device.osVersion + " (API " + device.apiLevel + ")"); imgui.nextColumn();
             imgui.text(device.state); imgui.nextColumn();
-            imgui.text("  ");
-            hovered = hovered || imgui.isItemHovered(HoveredFlag.AnyWindow);
+            if (imgui.button("getprop", new Vec2(100,60)))
+            {
+                clicked = true;
+            }
+            hovered = imgui.isItemHovered(HoveredFlag.AnyWindow);
             imgui.nextColumn();
             if (hovered)
             {
@@ -121,15 +126,33 @@ public enum  GUIManager {
                 imgui.setNextWindowFocus();
                 if (imgui.begin("getprop", hoveredDetailWindowShown, WindowFlag.NoSavedSettings.getI() | WindowFlag.AlwaysAutoResize.getI()))
                 {
-                    imgui.pushStyleColor(Col.Text, new Vec4(1.0f,1.0f,1.0f, 0.4f));
-                    imgui.text(device.allProp);
-                    imgui.popStyleColor(1);
-                    imgui.end();
+                    drawDeviceDetailProp(device,imgui);
                 }
             }
+            if (clicked)
+            {
+                LogManager.INSTANCE.logger.info("Clicked");
+                currentGetPropDevice = device;
+                imgui.openPopup("get_prop");
+            }
 
+            if (imgui.beginPopupModal("get_prop",null,WindowFlag.AlwaysAutoResize.getI()))
+            {
+                drawDeviceDetailProp(currentGetPropDevice,imgui);
+                imgui.endPopup();
+            }
             imgui.separator();
         });
+
+
+        imgui.end();
+    }
+
+    public void drawDeviceDetailProp(Device device, ImGui imgui)
+    {
+        imgui.pushStyleColor(Col.Text, new Vec4(1.0f,1.0f,1.0f, 0.4f));
+        imgui.text(device.allProp);
+        imgui.popStyleColor(1);
         imgui.end();
     }
 }
