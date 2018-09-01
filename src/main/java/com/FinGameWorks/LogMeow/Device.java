@@ -1,77 +1,47 @@
 package com.FinGameWorks.LogMeow;
 
-import se.vidstige.jadb.JadbDevice;
-import se.vidstige.jadb.JadbException;
-import sun.misc.IOUtils;
+import com.github.cosysoft.device.android.AndroidDevice;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.BiConsumer;
 
-public class Device {
-    public void setJadbDevice(JadbDevice jadbDevice) {
-        this.jadbDevice = jadbDevice;
-        if (jadbDevice != null)
+public class Device
+{
+    public void setAndroidDevice(AndroidDevice ad)
+    {
+        this.androidDevice = ad;
+        if (androidDevice != null)
         {
+            properties = new TreeMap<>(androidDevice.getDevice().getProperties());
+
             try {
-                InputStream inputStream;
-
-
-                inputStream = this.jadbDevice.execute("getprop");
-                String allPropStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                allProp = allPropStr != null ? allPropStr : "";
-
-                inputStream = this.jadbDevice.execute("getprop","ro.product.model");
-                String modelStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                model = modelStr != null ? modelStr : "";
-
-                inputStream = this.jadbDevice.execute("getprop", "ro.product.name");
-                String nameStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                name = nameStr != null ? nameStr : "";
-
-                inputStream = this.jadbDevice.execute("getprop", "ro.product.brand");
-                String brandStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                brand = brandStr != null ? brandStr : "";
-
-                inputStream = this.jadbDevice.execute("getprop", "ro.build.version.release");
-                String osVersionStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                osVersion = osVersionStr != null ? osVersionStr : "";
-
-                inputStream = this.jadbDevice.execute("getprop", "ro.build.version.sdk");
-                String apiLevelStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                apiLevel = apiLevelStr != null ? apiLevelStr : "";
-
-                inputStream = this.jadbDevice.execute("getprop", "ro.product.cpu.abilist");
-                String abiListStr = new BufferedReader(new InputStreamReader(inputStream))
-                        .lines().collect(Collectors.joining("\n"));
-                inputStream.close();
-                adiList = abiListStr != null ? abiListStr : "";
-
-                serial = jadbDevice.getSerial();
-                state = jadbDevice.getState().name();
-
-            } catch (IOException | JadbException e) {
+//                model = androidDevice.getBrand().getModel();
+//                brand = androidDevice.getBrand().getManufacture();
+                name = androidDevice.getName();
+//                osVersion = androidDevice.getDevice().getVersion().toString();
+//                apiLevel =androidDevice.getDevice().getVersion().getApiString();
+                serial = androidDevice.getSerialNumber();
+//                abiList = androidDevice.getDevice().getAbis();
+//                allProp = androidDevice.runAdbCommand("shell getprop");
+//                this.logCatDevice = new LogCatDevice(this);
+            }catch (Exception e)
+            {
                 e.printStackTrace();
             }
+        }else
+        {
+            LogManager.INSTANCE.logger.warning("androidDevice = null");
         }
     }
 
-    public JadbDevice jadbDevice;
+    public AndroidDevice getAndroidDevice() {
+        return androidDevice;
+    }
+
+    private AndroidDevice androidDevice;
     public String model = "";
     public String name = "";
     public String brand = "";
@@ -79,7 +49,7 @@ public class Device {
     public String apiLevel = "";
     public String serial = "";
     public String state = "";
-    public String adiList = "";
-
-    public String allProp = "";
+    public List<String> abiList = new ArrayList<>();
+    public TreeMap<String, String> properties;
+    public LogCatDevice logCatDevice;
 }

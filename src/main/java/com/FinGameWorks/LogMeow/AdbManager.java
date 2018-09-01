@@ -1,46 +1,50 @@
 package com.FinGameWorks.LogMeow;
 
-import se.vidstige.jadb.JadbConnection;
-import se.vidstige.jadb.JadbDevice;
-import se.vidstige.jadb.JadbException;
+import com.github.cosysoft.device.android.AndroidDevice;
+import com.github.cosysoft.device.android.impl.AndroidDeviceStore;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum  AdbManager {
     INSTANCE;
 
-    public List<Device> devices;
-    public JadbConnection jadb;
+    public List<Device> devices = new ArrayList<>();
     private Timer timer = new Timer();
 
-    AdbManager() {
-        jadb = new JadbConnection();
+    AdbManager()
+    {
+        try {
+            AndroidDeviceStore.getInstance().initAndroidDevices(true);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run()
             {
-                if (jadb != null)
+                TreeSet<AndroidDevice> devicesTreeSet = AndroidDeviceStore.getInstance()
+                        .getDevices();
+                devices = devicesTreeSet.stream().map(androidDevice ->
                 {
-                    try {
-                        devices = jadb.getDevices().stream().map(jadbDevice ->
-                        {
-                            Device device = new Device();
-                            device.setJadbDevice(jadbDevice);
-                            return device;
-                        }).collect(Collectors.toList());
-                    } catch (IOException | JadbException e) {
-                        e.printStackTrace();
-                        startADB();
-                    }
-                }
+                    Device device = new Device();
+                    device.setAndroidDevice(androidDevice);
+                    return device;
+                }).collect(Collectors.toList());
             }
         }, 0, 2*1000);
+    }
+
+    public void shutDown()
+    {
+        AndroidDeviceStore.getInstance().shutdown();
     }
 
     private void startADB()

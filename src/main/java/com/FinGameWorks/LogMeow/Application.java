@@ -1,6 +1,7 @@
 package com.FinGameWorks.LogMeow;
 
 
+import com.github.cosysoft.device.android.impl.AndroidDeviceStore;
 import glm_.vec2.Vec2i;
 import glm_.vec4.Vec4;
 import imgui.*;
@@ -60,6 +61,7 @@ public class Application
         }
         System.exit(0);
     }
+
     public Application()
     {
         AdbManager adbManager = AdbManager.INSTANCE;
@@ -98,6 +100,7 @@ public class Application
 
     public void quit()
     {
+        AndroidDeviceStore.getInstance().shutdown();
         lwjglGlfw.shutdown();
         ContextKt.destroy(ctx);
         window.destroy();

@@ -6,7 +6,11 @@ import imgui.*
 import imgui.internal.Window
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import java.util.function.Predicate
+import java.util.function.Supplier
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
 enum class GUIManager {
     INSTANCE;
@@ -79,7 +83,7 @@ enum class GUIManager {
         }
         imgui.columns(6, "devices", true)
         imgui.separator()
-        imgui.text("Serial")
+        imgui.text("Name")
         imgui.nextColumn()
         imgui.text("Brand")
         imgui.nextColumn()
@@ -95,9 +99,10 @@ enum class GUIManager {
 
 
         AdbManager.INSTANCE.devices.stream().forEach { device ->
+
             var hovered = false
             var clicked = false
-            imgui.text(device.serial)
+            imgui.text(device.name)
             imgui.nextColumn()
             imgui.text(device.brand)
             imgui.nextColumn()
@@ -107,15 +112,20 @@ enum class GUIManager {
             imgui.nextColumn()
             imgui.text(device.state)
             imgui.nextColumn()
+
+            imgui.pushId(device.name)
             if (imgui.button("getprop")) {
                 currentGetPropDevice = device;
                 clicked = true
             }
+            imgui.popId()
+            
             hovered = imgui.isItemHovered(HoveredFlag.AnyWindow)
             imgui.nextColumn()
             if (hovered) {
                 val hoveredDetailWindowShown = booleanArrayOf(hovered)
-                imgui.setNextWindowPos(imgui.mousePos, Cond.Always, Vec2(-0.02, -0.02))
+                imgui.setNextWindowPos(Vec2(imgui.mousePos.x + 10,imgui.mousePos.y + 10))
+                imgui.setNextWindowSize(Vec2(500,200))
                 imgui.setNextWindowBgAlpha(0.4f)
                 imgui.setNextWindowFocus()
                 if (imgui.begin("getprop", hoveredDetailWindowShown, WindowFlag.NoSavedSettings.i or WindowFlag.AlwaysAutoResize.i)) {
@@ -128,10 +138,14 @@ enum class GUIManager {
             }
             imgui.separator()
         }
-        imgui.setNextWindowSize(Vec2(imgui.io.displaySize.x/2,imgui.io.displaySize.y/2))
-        imgui.setNextWindowPos(Vec2(imgui.io.displaySize.x/4,imgui.io.displaySize.y/4))
+        imgui.setNextWindowSize(Vec2(imgui.io.displaySize.x * 2 / 3,imgui.io.displaySize.y/2))
+        imgui.setNextWindowPos(Vec2(imgui.io.displaySize.x/6,imgui.io.displaySize.y/4))
         if (imgui.beginPopupModal("get_prop", null, WindowFlag.NoResize.i)) {
-            drawDeviceDetailProp(currentGetPropDevice, imgui)
+            if (imgui.beginChild("device_detail_prop_child", Vec2(imgui.currentWindow.size.x - imgui.currentWindow.windowPadding.x * 2,imgui.currentWindow.size.y - 80 - - imgui.currentWindow.windowPadding.y * 2),true))
+            {
+                drawDeviceDetailProp(currentGetPropDevice, imgui)
+                imgui.endChild()
+            }
             if (imgui.button("Close"))
             {
                 imgui.closeCurrentPopup()
@@ -146,9 +160,32 @@ enum class GUIManager {
         imgui.begin("Logcat", logcatWindowShown, WindowFlag.MenuBar.i)
 
         var window : Window = imgui.currentWindow
+        var devicesList : List<Device> = AdbManager.INSTANCE.devices
+        val serialsStreamSupplier : Supplier<Stream<String>> = Supplier { devicesList.stream().map { device -> device.serial} }
+        var serialsList : List<String> =  (serialsStreamSupplier.get().collect(Collectors.toList()))
+
+        var deviceSelected = intArrayOf(0)
+
         if (imgui.beginMenuBar()) {
             drawWindowSizePosAdjustMenu(imgui,window)
+            imgui.combo("Device",deviceSelected,serialsList)
+            imgui.sameLine()
             imgui.endMenuBar()
+        }
+        if (deviceSelected.size > 0)
+        {
+            var deviceOptional : Optional<Device> = serialsStreamSupplier
+                    .get()
+                    .filter { serial -> serialsList[deviceSelected[0]].equals(serial) }
+                    .map { serial -> devicesList.stream().filter { device -> device.serial.equals(serial)}.findFirst().get() }.findFirst()
+            if(deviceOptional.isPresent)
+            {
+                var d : Device = deviceOptional.get()
+                d.logCatDevice.logs.stream().forEach{logcat -> imgui.text(logcat.message)}
+            }else
+            {
+                LogManager.INSTANCE.logger.warning("Device Not Present")
+            }
         }
         imgui.end();
     }
@@ -157,7 +194,19 @@ enum class GUIManager {
         imgui.pushStyleColor(Col.Text, Vec4(1.0f, 1.0f, 1.0f, 0.4f))
         if (device != null)
         {
-            imgui.text(device.allProp)
+            imgui.columns(2, "Props", true)
+            imgui.separator()
+            imgui.text("Key")
+            imgui.nextColumn()
+            imgui.text("Value")
+            imgui.nextColumn()
+            device.properties.forEach({ key, value ->
+                imgui.separator()
+                imgui.text(key)
+                imgui.nextColumn()
+                imgui.text(value)
+                imgui.nextColumn()
+            })
         }
         imgui.popStyleColor(1)
     }

@@ -46,6 +46,8 @@ task wrapper(type: Wrapper) {
 }
 dependencies {
     implementation 'com.github.kotlin-graphics:uno-sdk:v0.7.3'
-    implementation 'com.github.vidstige:jadb:v1.1.0'
+//    implementation 'com.github.vidstige:jadb:v1.1.0'
+    implementation 'com.github.cosysoft:device-api:0.9.3'
+//    implementation 'com.android.tools.ddms:ddmlib:25.3.0'
     compile fileTree(dir: 'lib', include: '*.jar')
 }
