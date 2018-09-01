@@ -12,6 +12,7 @@ enum class GUIManager {
     INSTANCE;
 
     var devicesWindowShown = booleanArrayOf(true)
+    var logcatWindowShown = booleanArrayOf(false)
     var demoWindowShown = booleanArrayOf(false)
     var currentGetPropDevice: Device? = null
 
@@ -31,6 +32,9 @@ enum class GUIManager {
         if (devicesWindowShown[0]) {
             drawDeviceWindow(imgui)
         }
+        if (logcatWindowShown[0]) {
+            drawLogcatWindow(imgui)
+        }
         if (demoWindowShown[0]) {
             imgui.showDemoWindow(demoWindowShown)
         }
@@ -48,6 +52,10 @@ enum class GUIManager {
             val isMenuDeviceItemSelected: Boolean = imgui.menuItem("Devices", "D", devicesWindowShown[0], true)
             if (isMenuDeviceItemSelected) {
                 devicesWindowShown[0] = !devicesWindowShown[0]
+            }
+            val isMenuLogcatItemSelected: Boolean = imgui.menuItem("Logcat", "L", logcatWindowShown[0], true)
+            if (isMenuLogcatItemSelected) {
+                logcatWindowShown[0] = !logcatWindowShown[0]
             }
             imgui.endMenu()
         }
@@ -133,6 +141,18 @@ enum class GUIManager {
         imgui.end()
     }
 
+    private fun drawLogcatWindow(imgui: ImGui)
+    {
+        imgui.begin("Logcat", logcatWindowShown, WindowFlag.MenuBar.i)
+
+        var window : Window = imgui.currentWindow
+        if (imgui.beginMenuBar()) {
+            drawWindowSizePosAdjustMenu(imgui,window)
+            imgui.endMenuBar()
+        }
+        imgui.end();
+    }
+
     fun drawDeviceDetailProp(device: Device?, imgui: ImGui) {
         imgui.pushStyleColor(Col.Text, Vec4(1.0f, 1.0f, 1.0f, 0.4f))
         if (device != null)
@@ -144,6 +164,8 @@ enum class GUIManager {
 
     fun drawWindowSizePosAdjustMenu(imgui: ImGui, window: Window)
     {
+        var barHeight = 20
+        var windowEdgePadding = 10
         if (imgui.beginMenu("Window", true)) {
 
             val isMenuCompactScreenItemSelected: Boolean = imgui.menuItem("Compact Window","OPTION+C");
@@ -151,11 +173,35 @@ enum class GUIManager {
             {
                 imgui.setWindowSize(window.name,Vec2(300,160))
             }
+            val isMenuLeftScreenItemSelected: Boolean = imgui.menuItem("Left Screen","OPTION+L");
+            if (isMenuLeftScreenItemSelected)
+            {
+                imgui.setWindowSize(window.name,Vec2(imgui.io.displaySize.x / 2 - windowEdgePadding * 2,imgui.io.displaySize.y - windowEdgePadding * 2 - barHeight))
+                imgui.setWindowPos(window.name,Vec2(windowEdgePadding,windowEdgePadding + barHeight))
+            }
+            val isMenuRightScreenItemSelected: Boolean = imgui.menuItem("Right Screen","OPTION+R");
+            if (isMenuRightScreenItemSelected)
+            {
+                imgui.setWindowSize(window.name,Vec2(imgui.io.displaySize.x / 2 - windowEdgePadding * 2,imgui.io.displaySize.y - windowEdgePadding * 2 - barHeight))
+                imgui.setWindowPos(window.name,Vec2(imgui.io.displaySize.x / 2 + windowEdgePadding,windowEdgePadding + barHeight))
+            }
+            val isMenuTopScreenItemSelected: Boolean = imgui.menuItem("Top Screen","OPTION+T");
+            if (isMenuTopScreenItemSelected)
+            {
+                imgui.setWindowSize(window.name,Vec2(imgui.io.displaySize.x- windowEdgePadding * 2,(imgui.io.displaySize.y - barHeight) / 2 - windowEdgePadding * 2))
+                imgui.setWindowPos(window.name,Vec2(windowEdgePadding, windowEdgePadding + barHeight))
+            }
+            val isMenuBottomScreenItemSelected: Boolean = imgui.menuItem("Bottom Screen","OPTION+B");
+            if (isMenuBottomScreenItemSelected)
+            {
+                imgui.setWindowSize(window.name,Vec2(imgui.io.displaySize.x- windowEdgePadding * 2,(imgui.io.displaySize.y - barHeight) / 2 - windowEdgePadding * 2))
+                imgui.setWindowPos(window.name,Vec2(windowEdgePadding,(imgui.io.displaySize.y - barHeight) / 2 +barHeight + windowEdgePadding))
+            }
             val isMenuFullScreenItemSelected: Boolean = imgui.menuItem("Full Screen","OPTION+F");
             if (isMenuFullScreenItemSelected)
             {
-                imgui.setWindowSize(window.name,Vec2(imgui.io.displaySize.x-20,imgui.io.displaySize.y-40))
-                imgui.setWindowPos(window.name,Vec2(10,30))
+                imgui.setWindowSize(window.name,Vec2(imgui.io.displaySize.x-windowEdgePadding*2,imgui.io.displaySize.y-windowEdgePadding*2-barHeight))
+                imgui.setWindowPos(window.name,Vec2(windowEdgePadding,windowEdgePadding + barHeight))
             }
             imgui.endMenu()
         }
