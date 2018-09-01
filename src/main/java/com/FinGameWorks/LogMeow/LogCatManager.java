@@ -19,7 +19,10 @@ public enum  LogCatManager {
             {
                 System.out.println("!logCatDeviceMap containsKey ." + serial + ".");
                 LogCatDevice logCatDevice = new LogCatDevice(serial);
-                logCatDeviceMap.put(serial, logCatDevice);
+                if (logCatDeviceMap.put(serial, logCatDevice) == null)
+                {
+                    System.out.println("!logCatDeviceMap put = null");
+                }
             }
             if (!serialLogsMap.containsKey(serial))
             {
