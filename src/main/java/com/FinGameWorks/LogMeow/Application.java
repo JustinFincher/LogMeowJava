@@ -8,6 +8,7 @@ import imgui.impl.ImplGL3;
 import imgui.impl.LwjglGlfw;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import uno.glfw.GlfwWindow;
 import uno.glfw.windowHint;
 
@@ -81,7 +82,7 @@ public class Application
         imgui.getStyle().setFrameBorderSize(1);
         imgui.getStyle().setPopupBorderSize(1);
         imgui.getStyle().setWindowBorderSize(1);
-
+        imgui.captureKeyboardFromApp(true);
 
         window.setWindowCloseCallback(() -> {
             System.exit(0);
