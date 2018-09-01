@@ -56,6 +56,12 @@ public class Device {
                 inputStream.close();
                 apiLevel = apiLevelStr != null ? apiLevelStr : "";
 
+                inputStream = this.jadbDevice.execute("getprop", "ro.product.cpu.abilist");
+                String abiListStr = new BufferedReader(new InputStreamReader(inputStream))
+                        .lines().collect(Collectors.joining("\n"));
+                inputStream.close();
+                adiList = abiListStr != null ? abiListStr : "";
+
                 serial = jadbDevice.getSerial();
                 state = jadbDevice.getState().name();
 
@@ -73,6 +79,7 @@ public class Device {
     public String apiLevel = "";
     public String serial = "";
     public String state = "";
+    public String adiList = "";
 
     public String allProp = "";
 }
