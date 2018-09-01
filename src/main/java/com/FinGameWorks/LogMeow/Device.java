@@ -16,17 +16,11 @@ public class Device
         if (androidDevice != null)
         {
             properties = new TreeMap<>(androidDevice.getDevice().getProperties());
-
             try {
-//                model = androidDevice.getBrand().getModel();
-//                brand = androidDevice.getBrand().getManufacture();
                 name = androidDevice.getName();
-//                osVersion = androidDevice.getDevice().getVersion().toString();
-//                apiLevel =androidDevice.getDevice().getVersion().getApiString();
                 serial = androidDevice.getSerialNumber();
-//                abiList = androidDevice.getDevice().getAbis();
-//                allProp = androidDevice.runAdbCommand("shell getprop");
-//                this.logCatDevice = new LogCatDevice(this);
+                product = properties.get("ro.build.product");
+                System.out.println("Device setAndroidDevice " + serial);
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -42,14 +36,8 @@ public class Device
     }
 
     private AndroidDevice androidDevice;
-    public String model = "";
     public String name = "";
-    public String brand = "";
-    public String osVersion = "";
-    public String apiLevel = "";
     public String serial = "";
-    public String state = "";
-    public List<String> abiList = new ArrayList<>();
+    public String product = "";
     public TreeMap<String, String> properties;
-    public LogCatDevice logCatDevice;
 }

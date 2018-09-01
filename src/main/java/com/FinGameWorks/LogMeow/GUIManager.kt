@@ -1,5 +1,6 @@
 package com.FinGameWorks.LogMeow
 
+import com.android.ddmlib.logcat.LogCatMessage
 import glm_.vec2.Vec2
 import glm_.vec4.Vec4
 import imgui.*
@@ -11,6 +12,7 @@ import java.util.function.Predicate
 import java.util.function.Supplier
 import java.util.stream.Collectors
 import java.util.stream.Stream
+import kotlin.collections.ArrayList
 
 enum class GUIManager {
     INSTANCE;
@@ -18,6 +20,7 @@ enum class GUIManager {
     var devicesWindowShown = booleanArrayOf(true)
     var logcatWindowShown = booleanArrayOf(false)
     var demoWindowShown = booleanArrayOf(false)
+    var currentGetLogDevice = intArrayOf(0)
     var currentGetPropDevice: Device? = null
 
     fun draw(imgui: ImGui) {
@@ -81,61 +84,49 @@ enum class GUIManager {
             imgui.text("Device Count: " + AdbManager.INSTANCE.devices.size)
             imgui.endMenuBar()
         }
-        imgui.columns(6, "devices", true)
+        imgui.columns(2, "devices", true)
         imgui.separator()
+
         imgui.text("Name")
-        imgui.nextColumn()
-        imgui.text("Brand")
-        imgui.nextColumn()
-        imgui.text("Model")
-        imgui.nextColumn()
-        imgui.text("OS")
-        imgui.nextColumn()
-        imgui.text("State")
         imgui.nextColumn()
         imgui.text("Extras")
         imgui.nextColumn()
-        imgui.separator()
 
 
         AdbManager.INSTANCE.devices.stream().forEach { device ->
 
-            var hovered = false
-            var clicked = false
+            imgui.separator()
             imgui.text(device.name)
             imgui.nextColumn()
-            imgui.text(device.brand)
-            imgui.nextColumn()
-            imgui.text(device.model)
-            imgui.nextColumn()
-            imgui.text(device.osVersion + " (API " + device.apiLevel + ")")
-            imgui.nextColumn()
-            imgui.text(device.state)
-            imgui.nextColumn()
 
+            var getpropButtonClicked = false
+            var controlDeviceButtonClicked = false
             imgui.pushId(device.name)
             if (imgui.button("getprop")) {
                 currentGetPropDevice = device;
-                clicked = true
+                getpropButtonClicked = true
             }
-            imgui.popId()
-            
-            hovered = imgui.isItemHovered(HoveredFlag.AnyWindow)
-            imgui.nextColumn()
-            if (hovered) {
-                val hoveredDetailWindowShown = booleanArrayOf(hovered)
+            if (imgui.isItemHovered())
+            {
+                val hoveredDetailWindowShown = booleanArrayOf(imgui.isItemHovered())
                 imgui.setNextWindowPos(Vec2(imgui.mousePos.x + 10,imgui.mousePos.y + 10))
                 imgui.setNextWindowSize(Vec2(500,200))
                 imgui.setNextWindowBgAlpha(0.4f)
                 imgui.setNextWindowFocus()
-                if (imgui.begin("getprop", hoveredDetailWindowShown, WindowFlag.NoSavedSettings.i or WindowFlag.AlwaysAutoResize.i)) {
+                if (imgui.begin("get prop", hoveredDetailWindowShown, WindowFlag.NoSavedSettings.i or WindowFlag.AlwaysAutoResize.i)) {
                     drawDeviceDetailProp(device, imgui)
                     imgui.end()
                 }
             }
-            if (clicked) {
+            imgui.sameLine()
+            if (imgui.button("control")) {
+                controlDeviceButtonClicked = true
+            }
+            imgui.popId()
+            if (getpropButtonClicked) {
                 imgui.openPopup("get_prop")
             }
+            imgui.nextColumn()
             imgui.separator()
         }
         imgui.setNextWindowSize(Vec2(imgui.io.displaySize.x * 2 / 3,imgui.io.displaySize.y/2))
@@ -161,35 +152,42 @@ enum class GUIManager {
 
         var window : Window = imgui.currentWindow
         var devicesList : List<Device> = AdbManager.INSTANCE.devices
-        val serialsStreamSupplier : Supplier<Stream<String>> = Supplier { devicesList.stream().map { device -> device.serial} }
-        var serialsList : List<String> =  (serialsStreamSupplier.get().collect(Collectors.toList()))
+        var serialsList : List<String> = devicesList.stream().map { device -> device.serial }.collect(Collectors.toList())
+        var nameList : List<String> = devicesList.stream().map { device -> device.name }.collect(Collectors.toList())
 
-        var deviceSelected = intArrayOf(0)
 
         if (imgui.beginMenuBar()) {
             drawWindowSizePosAdjustMenu(imgui,window)
-            imgui.combo("Device",deviceSelected,serialsList)
+            imgui.combo("Device",currentGetLogDevice,nameList)
             imgui.sameLine()
             imgui.endMenuBar()
         }
-        if (deviceSelected.size > 0)
+        if (currentGetLogDevice.isNotEmpty() && serialsList.size >= currentGetLogDevice[0] + 1)
         {
-            var deviceOptional : Optional<Device> = serialsStreamSupplier
-                    .get()
-                    .filter { serial -> serialsList[deviceSelected[0]].equals(serial) }
-                    .map { serial -> devicesList.stream().filter { device -> device.serial.equals(serial)}.findFirst().get() }.findFirst()
-            if(deviceOptional.isPresent)
-            {
-                var d : Device = deviceOptional.get()
-                d.logCatDevice.logs.stream().forEach{logcat -> imgui.text(logcat.message)}
+            var messages : java.util.ArrayList<LogCatMessage>? = LogCatManager.INSTANCE.serialLogsMap.get(serialsList.get(currentGetLogDevice[0]))
+            if (messages != null) {
+
+                val clone = messages.toMutableList()
+                for (i in 1..clone.size)
+                {
+                    imgui.text(clone[i-1].message)
+                }
+                imgui.setScrollHere(1.0f)
             }else
             {
-                LogManager.INSTANCE.logger.warning("Device Not Present")
+                System.out.println("messages == null getting " + serialsList.get(currentGetLogDevice[0]) + " from serialLogsMap");
             }
+        }else
+        {
+            System.out.println("currentGetLogDevice Empty || serialsList size " + serialsList.size + " >= " + "currentGetLogDevice[0] " + currentGetLogDevice[0] + " + 1");
         }
-        imgui.end();
+        imgui.end()
     }
 
+    fun drawDeviceManipulate(device: Device?, imgui: ImGui)
+    {
+
+    }
     fun drawDeviceDetailProp(device: Device?, imgui: ImGui) {
         imgui.pushStyleColor(Col.Text, Vec4(1.0f, 1.0f, 1.0f, 0.4f))
         if (device != null)

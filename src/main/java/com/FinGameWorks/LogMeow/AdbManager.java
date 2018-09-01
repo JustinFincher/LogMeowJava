@@ -30,16 +30,21 @@ public enum  AdbManager {
             @Override
             public void run()
             {
-                TreeSet<AndroidDevice> devicesTreeSet = AndroidDeviceStore.getInstance()
-                        .getDevices();
-                devices = devicesTreeSet.stream().map(androidDevice ->
-                {
-                    Device device = new Device();
-                    device.setAndroidDevice(androidDevice);
-                    return device;
-                }).collect(Collectors.toList());
+                new Thread(() -> {
+                    TreeSet<AndroidDevice> devicesTreeSet = AndroidDeviceStore.getInstance()
+                            .getDevices();
+                    devices = devicesTreeSet.stream().map(androidDevice ->
+                    {
+                        Device device = new Device();
+                        device.setAndroidDevice(androidDevice);
+                        return device;
+                    }).collect(Collectors.toList());
+
+                    LogCatManager.INSTANCE.tryDiffSerial(devices.stream().map(device -> device.serial).collect(Collectors.toList()));
+
+                }).start();
             }
-        }, 0, 2*1000);
+        }, 0, 2000);
     }
 
     public void shutDown()
@@ -47,25 +52,25 @@ public enum  AdbManager {
         AndroidDeviceStore.getInstance().shutdown();
     }
 
-    private void startADB()
-    {
-        boolean issue = false;
-        try {
-            String userPath = System.getenv("PATH");
-            LogManager.INSTANCE.logger.info(userPath);
-            String[] command = OSUtilities.isWindows() ? new String[]{"cmd.exe", "/c", "adb start-server"} : new String[]{"/bin/bash", "-c", "-l", "adb start-server"};
-            ProcessBuilder pb = new ProcessBuilder(command);
-            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-            pb.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            issue = true;
-        }finally {
-            if (!issue)
-            {
-                Application.Restart();
-            }
-        }
-    }
+//    private void startADB()
+//    {
+//        boolean issue = false;
+//        try {
+//            String userPath = System.getenv("PATH");
+//            LogManager.INSTANCE.logger.info(userPath);
+//            String[] command = OSUtilities.isWindows() ? new String[]{"cmd.exe", "/c", "adb start-server"} : new String[]{"/bin/bash", "-c", "-l", "adb start-server"};
+//            ProcessBuilder pb = new ProcessBuilder(command);
+//            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+//            pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+//            pb.start();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            issue = true;
+//        }finally {
+//            if (!issue)
+//            {
+//                Application.Restart();
+//            }
+//        }
+//    }
 }

@@ -1,7 +1,11 @@
 package com.FinGameWorks.LogMeow;
 
+import com.android.ddmlib.Log;
+import com.android.ddmlib.logcat.LogCatFilter;
 import com.android.ddmlib.logcat.LogCatListener;
 import com.android.ddmlib.logcat.LogCatMessage;
+import com.github.cosysoft.device.android.AndroidDevice;
+import com.github.cosysoft.device.android.impl.AndroidDeviceStore;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,36 +14,43 @@ import java.util.stream.Collectors;
 
 public class LogCatDevice
 {
-    public LogCatDevice(Device deviceToSet)
+    public String serialNum;
+
+    public LogCatDevice(String serial)
     {
-        device = deviceToSet;
-        device.getAndroidDevice().addLogCatListener(logCatListener);
+        this.serialNum = serial;
+        androidDevice = AndroidDeviceStore.getInstance().getDeviceBySerial(serial);
+        if (androidDevice != null)
+        {
+            try {
+                androidDevice.addLogCatListener(logCatListener);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }else {
+            System.out.println("androidDevice null");
+        }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        device.getAndroidDevice().removeLogCatListener(logCatListener);
+    public void stopListening()
+    {
+        try {
+            androidDevice.removeLogCatListener(logCatListener);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    public Device device;
-    public List<LogCatMessage> logs = new ArrayList<>();
+    public AndroidDevice androidDevice;
+//    public LogCatFilter filter = new LogCatFilter("", "", "", "",
+//                "Skyline", Log.LogLevel.DEBUG);
 
-    //        final LogCatFilter filter = new LogCatFilter("", "", "com.android", "",
-//                "", Log.LogLevel.WARN);
-
-    final LogCatListener logCatListener = msgList -> {
+    private final LogCatListener logCatListener = msgList -> {
         for (LogCatMessage msg : msgList)
         {
-//                    if (filter.matches(msg)) {
-            logs.add(msg);
-            System.out.println(msg);
-//                    }
-
-        }
-        if (logs.size() > 1000)
-        {
-            logs = logs.stream().skip(logs.size() - 1000).collect(Collectors.toList());
+           LogCatManager.INSTANCE.addLog(serialNum, msg);
         }
     };
 }
