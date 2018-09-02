@@ -15,6 +15,8 @@ import uno.glfw.windowHint;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -52,7 +54,16 @@ public class Application
                 pb.command("java", "-jar", "-XstartOnFirstThread", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
             }else
             {
-                pb.command("java", "-jar", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
+                String path = Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+
+                System.out.println(path);
+                String com[] = path.split("/");
+                ArrayList<String> coms = new ArrayList<>(Arrays.asList(com));
+                coms.remove(0);
+                coms.forEach(System.out::println);
+                String finalPath = String.join("\\",coms);
+                System.out.println(finalPath);
+                pb.command("java", "-jar",  finalPath, "run");
             }
             pb.inheritIO();
             pb.start();

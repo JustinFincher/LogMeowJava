@@ -181,79 +181,79 @@ enum class GUIManager {
 
     private fun drawLogcatWindow(imgui: ImGui)
     {
-        imgui.begin("Logcat", logcatWindowShown, WindowFlag.MenuBar.i)
-
-        var window : Window = imgui.currentWindow
-        var devicesList : List<Device> = AdbManager.INSTANCE.devices
-        var serialsList : List<String> = devicesList.stream().map { device -> device.serial }.collect(Collectors.toList())
-        var nameList : List<String> = devicesList.stream().map { device -> device.name }.collect(Collectors.toList())
-
-        if (imgui.beginMenuBar())
+        if( imgui.begin("Logcat", logcatWindowShown, WindowFlag.MenuBar.i) )
         {
-            drawWindowSizePosAdjustMenu(imgui,window)
-            imgui.sameLine()
-            imgui.checkbox("Scroll To Bottom",logcatScrollingToBottom,0)
-            imgui.endMenuBar()
-        }
-        if (imgui.beginChild("logcat_panel_logs",Vec2(imgui.currentWindow.size.x,imgui.currentWindow.size.y - imgui.windowHeight - imgui.frameHeightWithSpacing / 2 - 40),true))
-        {
-            if (currentGetLogDevice.isNotEmpty() && serialsList.size >= currentGetLogDevice[0] + 1)
+            var window : Window = imgui.currentWindow
+            var devicesList : List<Device> = AdbManager.INSTANCE.devices
+            var serialsList : List<String> = devicesList.stream().map { device -> device.serial }.collect(Collectors.toList())
+            var nameList : List<String> = devicesList.stream().map { device -> device.name }.collect(Collectors.toList())
+
+            if (imgui.beginMenuBar())
             {
-                var messages : java.util.ArrayList<LogCatMessage>? = LogCatManager.INSTANCE.serialLogsMap.get(serialsList.get(currentGetLogDevice[0]))
-                if (messages != null) {
-                    val clone = messages.toMutableList()
-                    var color : Vec4
-                    var hasNoMatchTimeStamp : Boolean = true
-                    for (i in 1..clone.size)
-                    {
-                        when(if (clone[i-1].logLevel != null) clone[i-1].logLevel else Log.LogLevel.INFO)
+                drawWindowSizePosAdjustMenu(imgui,window)
+                imgui.checkbox("Scroll To Bottom",logcatScrollingToBottom,0)
+                imgui.endMenuBar()
+            }
+            if (imgui.beginChild("logcat_panel_logs",Vec2(imgui.currentWindow.size.x,imgui.currentWindow.size.y - imgui.windowHeight - imgui.frameHeightWithSpacing / 2 - 40),true))
+            {
+                if (currentGetLogDevice.isNotEmpty() && serialsList.size >= currentGetLogDevice[0] + 1)
+                {
+                    var messages : java.util.ArrayList<LogCatMessage>? = LogCatManager.INSTANCE.serialLogsMap.get(serialsList.get(currentGetLogDevice[0]))
+                    if (messages != null) {
+                        val clone = messages.toMutableList()
+                        var color : Vec4
+                        var hasNoMatchTimeStamp : Boolean = true
+                        for (i in 1..clone.size)
                         {
-                            Log.LogLevel.VERBOSE -> color = Vec4(1.0,1.0,1.0,0.6)
-                            Log.LogLevel.INFO -> color = Vec4(1.0,1.0,1.0,0.8)
-                            Log.LogLevel.DEBUG -> color = Vec4(1.0,1.0,1.0,1.0)
-                            Log.LogLevel.WARN -> color = Vec4(1.0,1.0,0.0,1.0)
-                            Log.LogLevel.ERROR -> color = Vec4(1.0,0.0,0.0,1.0)
-                            Log.LogLevel.ASSERT -> color = Vec4(1.0,0.0,1.0,1.0)
-                        }
-                        imgui.textColored(color,clone[i-1].timestamp.toString() + " " + clone[i-1].logLevel + " " + clone[i-1].appName + " " + clone[i-1].message)
+                            when(if (clone[i-1].logLevel != null) clone[i-1].logLevel else Log.LogLevel.INFO)
+                            {
+                                Log.LogLevel.VERBOSE -> color = Vec4(1.0,1.0,1.0,0.6)
+                                Log.LogLevel.INFO -> color = Vec4(1.0,1.0,1.0,0.8)
+                                Log.LogLevel.DEBUG -> color = Vec4(1.0,1.0,1.0,1.0)
+                                Log.LogLevel.WARN -> color = Vec4(1.0,1.0,0.0,1.0)
+                                Log.LogLevel.ERROR -> color = Vec4(1.0,0.0,0.0,1.0)
+                                Log.LogLevel.ASSERT -> color = Vec4(1.0,0.0,1.0,1.0)
+                            }
+                            imgui.textColored(color,clone[i-1].timestamp.toString() + " " + clone[i-1].logLevel + " " + clone[i-1].appName + " " + clone[i-1].message)
 
-                        if (logcatScrollingToBottom[0])
-                        {
-                            if (i == clone.size)
+                            if (logcatScrollingToBottom[0])
                             {
-                                logcatScrollingKeepTimeStamp = clone[i - 1].timestamp
-                            }
-                            imgui.setScrollHere(1.0f)
-                        }else
-                        {
-                            if (clone[i-1].timestamp == logcatScrollingKeepTimeStamp)
+                                if (i == clone.size)
+                                {
+                                    logcatScrollingKeepTimeStamp = clone[i - 1].timestamp
+                                }
+                                imgui.setScrollHere(1.0f)
+                            }else
                             {
-                                hasNoMatchTimeStamp = false
-                                imgui.setScrollHere()
+                                if (clone[i-1].timestamp == logcatScrollingKeepTimeStamp)
+                                {
+                                    hasNoMatchTimeStamp = false
+                                    imgui.setScrollHere()
+                                }
                             }
                         }
-                    }
-                    if (!logcatScrollingToBottom[0] && hasNoMatchTimeStamp == true)
+                        if (!logcatScrollingToBottom[0] && hasNoMatchTimeStamp == true)
+                        {
+                            logcatScrollingKeepTimeStamp = clone[clone.size - 1].timestamp
+                        }
+                    }else
                     {
-                        logcatScrollingKeepTimeStamp = clone[clone.size - 1].timestamp
+                        System.out.println("messages == null getting " + serialsList.get(currentGetLogDevice[0]) + " from serialLogsMap");
                     }
                 }else
                 {
-                    System.out.println("messages == null getting " + serialsList.get(currentGetLogDevice[0]) + " from serialLogsMap");
+                    //System.out.println("currentGetLogDevice Empty || serialsList size " + serialsList.size + " >= " + "currentGetLogDevice[0] " + currentGetLogDevice[0] + " + 1");
                 }
-            }else
-            {
-                System.out.println("currentGetLogDevice Empty || serialsList size " + serialsList.size + " >= " + "currentGetLogDevice[0] " + currentGetLogDevice[0] + " + 1");
+                imgui.endChild()
             }
-            imgui.endChild()
-        }
-        if (imgui.beginChild("logcat_panel_options",Vec2(imgui.currentWindow.size.x,40),true))
-        {
-            imgui.combo("Device",currentGetLogDevice,nameList)
-            imgui.endChild()
-        }
+            if (imgui.beginChild("logcat_panel_options",Vec2(imgui.currentWindow.size.x,40),false))
+            {
+                imgui.combo("Device",currentGetLogDevice,nameList)
+                imgui.endChild()
+            }
 
-        imgui.end()
+            imgui.end()
+        }
     }
 
     fun drawDeviceManipulate(device: Device?, imgui: ImGui)
