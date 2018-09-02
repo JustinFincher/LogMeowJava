@@ -78,7 +78,7 @@ public class Application
 
         ctx = new Context(null);
         lwjglGlfw.init(window, true, LwjglGlfw.GlfwClientApi.OpenGL);
-        imgui.getIo().getFonts().addFontFromFileTTF("FiraCode-Retina.ttf", 16.0f, new FontConfig(),new int[]{});
+        imgui.getIo().getFonts().addFontFromFileTTF("FiraCode-Retina.ttf", 15.0f, new FontConfig(),new int[]{});
         imgui.styleColorsDark(null);
         imgui.getStyle().setFrameRounding(12);
         imgui.getStyle().setFrameBorderSize(1);

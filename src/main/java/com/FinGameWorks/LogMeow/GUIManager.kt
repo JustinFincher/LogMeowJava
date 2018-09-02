@@ -1,5 +1,6 @@
 package com.FinGameWorks.LogMeow
 
+import com.android.ddmlib.Log
 import com.android.ddmlib.logcat.LogCatMessage
 import glm_.vec2.Vec2
 import glm_.vec4.Vec4
@@ -168,9 +169,20 @@ enum class GUIManager {
             if (messages != null) {
 
                 val clone = messages.toMutableList()
+
+                var color : Vec4
                 for (i in 1..clone.size)
                 {
-                    imgui.text(clone[i-1].message)
+                    when(clone[i-1].logLevel)
+                    {
+                        Log.LogLevel.VERBOSE -> color = Vec4(1.0,1.0,1.0,0.6)
+                        Log.LogLevel.INFO -> color = Vec4(1.0,1.0,1.0,0.8)
+                        Log.LogLevel.DEBUG -> color = Vec4(1.0,1.0,1.0,1.0)
+                        Log.LogLevel.WARN -> color = Vec4(1.0,1.0,0.0,1.0)
+                        Log.LogLevel.ERROR -> color = Vec4(1.0,0.0,0.0,1.0)
+                        Log.LogLevel.ASSERT -> color = Vec4(1.0,0.0,1.0,1.0)
+                    }
+                    imgui.textColored(color,clone[i-1].timestamp.toString() + " " + clone[i-1].logLevel + " " + clone[i-1].appName + " " + clone[i-1].message)
                 }
                 imgui.setScrollHere(1.0f)
             }else
