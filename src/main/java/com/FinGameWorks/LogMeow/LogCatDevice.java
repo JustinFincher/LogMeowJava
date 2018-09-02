@@ -10,6 +10,8 @@ import com.github.cosysoft.device.android.impl.AndroidDeviceStore;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class LogCatDevice
@@ -18,25 +20,41 @@ public class LogCatDevice
 
     public LogCatDevice(String serial)
     {
+        System.out.println("LogCatDevice " + serial + " init");
         this.serialNum = serial;
-        androidDevice = AndroidDeviceStore.getInstance().getDeviceBySerial(serial);
-        if (androidDevice != null)
-        {
-            try {
-                androidDevice.addLogCatListener(logCatListener);
-            }catch (Exception e)
+
+        try {
+            androidDevice = AndroidDeviceStore.getInstance().getDeviceBySerial(serial);
+            System.out.println("androidDevice " + androidDevice);
+            if (androidDevice != null)
             {
-                e.printStackTrace();
+                Runnable r = () -> {
+                    androidDevice.addLogCatListener(logCatListener);
+                };
+
+                ExecutorService executor = Executors.newCachedThreadPool();
+                executor.submit(r);
+
             }
-        }else {
-            System.out.println("androidDevice null");
+            else {
+                System.out.println("androidDevice null");
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
     public void stopListening()
     {
         try {
-            androidDevice.removeLogCatListener(logCatListener);
+            Runnable r = () -> {
+                androidDevice.removeLogCatListener(logCatListener);
+            };
+
+            ExecutorService executor = Executors.newCachedThreadPool();
+            executor.submit(r);
+
         }catch (Exception e)
         {
             e.printStackTrace();

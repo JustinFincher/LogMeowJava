@@ -44,7 +44,7 @@ public enum  AdbManager {
 
                 }).start();
             }
-        }, 0, 2000);
+        }, 0, 1000);
     }
 
     public void shutDown()

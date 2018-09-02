@@ -20,7 +20,6 @@ public class Device
                 name = androidDevice.getName();
                 serial = androidDevice.getSerialNumber();
                 product = properties.get("ro.build.product");
-                System.out.println("Device setAndroidDevice " + serial);
             }catch (Exception e)
             {
                 e.printStackTrace();

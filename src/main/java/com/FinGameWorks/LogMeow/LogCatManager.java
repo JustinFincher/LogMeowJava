@@ -10,27 +10,23 @@ public enum  LogCatManager {
 
     public void tryDiffSerial(List<String> serialList)
     {
-        logCatDeviceMap.keySet().stream().forEach(key -> System.out.println("LogDevice " + key));
-//        serialLogsMap.keySet().stream().forEach(key -> System.out.println("Logs " + key));
 
-        serialList.stream().forEach(serial ->
+        serialList.forEach(serial ->
         {
             if (!logCatDeviceMap.containsKey(serial))
             {
-                System.out.println("!logCatDeviceMap containsKey ." + serial + ".");
+                System.out.println("logCatDeviceMap add " + serial);
                 LogCatDevice logCatDevice = new LogCatDevice(serial);
-                if (logCatDeviceMap.put(serial, logCatDevice) == null)
-                {
-                    System.out.println("!logCatDeviceMap put = null");
-                }
+                logCatDeviceMap.put(serial, logCatDevice);
             }
             if (!serialLogsMap.containsKey(serial))
             {
-                LogManager.INSTANCE.logger.info("!serialLogsMap containsKey " + serial);
+                System.out.println("serialLogsMap add " + serial);
                 serialLogsMap.put(serial,new ArrayList<LogCatMessage>());
             }
         });
-        logCatDeviceMap.keySet().stream().forEach(oldSerial -> {
+        logCatDeviceMap.keySet().forEach(oldSerial ->
+        {
             if (!serialList.contains(oldSerial))
             {
                 System.out.println("logCatDeviceMap remove " + oldSerial);
@@ -50,7 +46,6 @@ public enum  LogCatManager {
 //        System.out.println(message.getMessage());
         if (!serialLogsMap.containsKey(serial))
         {
-            LogManager.INSTANCE.logger.info("serialLogsMap add " + serial);
             serialLogsMap.put(serial, new ArrayList<LogCatMessage>());
         }
         ArrayList<LogCatMessage> list = serialLogsMap.putIfAbsent(serial, new ArrayList<LogCatMessage>());
