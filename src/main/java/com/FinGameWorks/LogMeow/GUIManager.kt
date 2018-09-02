@@ -2,6 +2,7 @@ package com.FinGameWorks.LogMeow
 
 import com.android.ddmlib.Log
 import com.android.ddmlib.logcat.LogCatMessage
+import com.android.ddmlib.logcat.LogCatTimestamp
 import glm_.vec2.Vec2
 import glm_.vec4.Vec4
 import imgui.*
@@ -21,12 +22,15 @@ enum class GUIManager {
     var devicesWindowShown = booleanArrayOf(true)
     var logcatWindowShown = booleanArrayOf(false)
     var demoWindowShown = booleanArrayOf(false)
+    var shouldOpenAbout : Boolean = false
     var currentGetLogDevice = intArrayOf(0)
     var currentGetPropDevice: Device? = null
+    var logcatScrollingToBottom = booleanArrayOf(true)
+    var logcatScrollingKeepTimeStamp : LogCatTimestamp = LogCatTimestamp.ZERO
 
     fun draw(imgui: ImGui) {
         if (imgui.beginMainMenuBar()) {
-            if (imgui.beginMenu("LogMeow", false)) {
+            if (imgui.beginMenu("LogMeow " + Values.version, false)) {
                 imgui.endMenu()
             }
             drawTopLevelMenu(imgui)
@@ -46,11 +50,32 @@ enum class GUIManager {
         if (demoWindowShown[0]) {
             imgui.showDemoWindow(demoWindowShown)
         }
+
         if (imgui.io.mouseClicked[1]) {
             imgui.openPopup("blank_scene_context_menu")
         }
         if (imgui.beginPopup("blank_scene_context_menu", WindowFlag.None.i)) {
             drawTopLevelMenu(imgui)
+            imgui.endPopup()
+        }
+        if (shouldOpenAbout)
+        {
+            shouldOpenAbout = false
+            imgui.openPopup("about_popup")
+        }
+        if(imgui.beginPopupModal("about_popup",null, WindowFlag.None.i))
+        {
+            imgui.setWindowSize(Vec2(imgui.io.displaySize.x * 2 / 3,imgui.io.displaySize.y/2))
+            imgui.setWindowPos(Vec2(imgui.io.displaySize.x/6,imgui.io.displaySize.y/4))
+            imgui.text("LogMeow " + Values.version)
+            if (imgui.button("Author : Justin Fincher"))
+            {
+                OSUtilities.openURL("https://fincher.im")
+            }
+            if (imgui.button("Close"))
+            {
+                imgui.closeCurrentPopup()
+            }
             imgui.endPopup()
         }
     }
@@ -67,10 +92,16 @@ enum class GUIManager {
             }
             imgui.endMenu()
         }
-        if (imgui.beginMenu("Metrics", true)) {
+        if (imgui.beginMenu("Extras", true)) {
             val isMenuDemoItemSelected: Boolean = imgui.menuItem("IMGUI Demo", "", demoWindowShown[0], true)
             if (isMenuDemoItemSelected) {
                 demoWindowShown[0] = !demoWindowShown[0]
+            }
+
+            if (imgui.menuItem("About", "", booleanArrayOf(false), true))
+            {
+                System.out.println("About")
+                shouldOpenAbout = true
             }
             imgui.endMenu()
         }
@@ -120,9 +151,9 @@ enum class GUIManager {
                 }
             }
             imgui.sameLine()
-            if (imgui.button("control")) {
-                controlDeviceButtonClicked = true
-            }
+//            if (imgui.button("control")) {
+//                controlDeviceButtonClicked = true
+//            }
             imgui.popId()
             if (getpropButtonClicked) {
                 imgui.openPopup("get_prop")
@@ -130,10 +161,11 @@ enum class GUIManager {
             imgui.nextColumn()
             imgui.separator()
         }
-        imgui.setNextWindowSize(Vec2(imgui.io.displaySize.x * 2 / 3,imgui.io.displaySize.y/2))
-        imgui.setNextWindowPos(Vec2(imgui.io.displaySize.x/6,imgui.io.displaySize.y/4))
         if (imgui.beginPopupModal("get_prop", null, WindowFlag.NoResize.i)) {
-            if (imgui.beginChild("device_detail_prop_child", Vec2(imgui.currentWindow.size.x - imgui.currentWindow.windowPadding.x * 2,imgui.currentWindow.size.y - 80 - - imgui.currentWindow.windowPadding.y * 2),true))
+
+            imgui.setWindowSize(Vec2(imgui.io.displaySize.x * 2 / 3,imgui.io.displaySize.y/2))
+            imgui.setWindowPos(Vec2(imgui.io.displaySize.x/6,imgui.io.displaySize.y/4))
+            if (imgui.beginChild("device_detail_prop_child", Vec2(imgui.currentWindow.size.x - imgui.currentWindow.windowPadding.x * 2,imgui.currentWindow.size.y - 50 - imgui.currentWindow.windowPadding.y * 2),true))
             {
                 drawDeviceDetailProp(currentGetPropDevice, imgui)
                 imgui.endChild()
@@ -156,43 +188,71 @@ enum class GUIManager {
         var serialsList : List<String> = devicesList.stream().map { device -> device.serial }.collect(Collectors.toList())
         var nameList : List<String> = devicesList.stream().map { device -> device.name }.collect(Collectors.toList())
 
-
-        if (imgui.beginMenuBar()) {
+        if (imgui.beginMenuBar())
+        {
             drawWindowSizePosAdjustMenu(imgui,window)
-            imgui.combo("Device",currentGetLogDevice,nameList)
             imgui.sameLine()
+            imgui.checkbox("Scroll To Bottom",logcatScrollingToBottom,0)
             imgui.endMenuBar()
         }
-        if (currentGetLogDevice.isNotEmpty() && serialsList.size >= currentGetLogDevice[0] + 1)
+        if (imgui.beginChild("logcat_panel_logs",Vec2(imgui.currentWindow.size.x,imgui.currentWindow.size.y - imgui.windowHeight - imgui.frameHeightWithSpacing / 2 - 40),true))
         {
-            var messages : java.util.ArrayList<LogCatMessage>? = LogCatManager.INSTANCE.serialLogsMap.get(serialsList.get(currentGetLogDevice[0]))
-            if (messages != null) {
-
-                val clone = messages.toMutableList()
-
-                var color : Vec4
-                for (i in 1..clone.size)
-                {
-                    when(clone[i-1].logLevel)
+            if (currentGetLogDevice.isNotEmpty() && serialsList.size >= currentGetLogDevice[0] + 1)
+            {
+                var messages : java.util.ArrayList<LogCatMessage>? = LogCatManager.INSTANCE.serialLogsMap.get(serialsList.get(currentGetLogDevice[0]))
+                if (messages != null) {
+                    val clone = messages.toMutableList()
+                    var color : Vec4
+                    var hasNoMatchTimeStamp : Boolean = true
+                    for (i in 1..clone.size)
                     {
-                        Log.LogLevel.VERBOSE -> color = Vec4(1.0,1.0,1.0,0.6)
-                        Log.LogLevel.INFO -> color = Vec4(1.0,1.0,1.0,0.8)
-                        Log.LogLevel.DEBUG -> color = Vec4(1.0,1.0,1.0,1.0)
-                        Log.LogLevel.WARN -> color = Vec4(1.0,1.0,0.0,1.0)
-                        Log.LogLevel.ERROR -> color = Vec4(1.0,0.0,0.0,1.0)
-                        Log.LogLevel.ASSERT -> color = Vec4(1.0,0.0,1.0,1.0)
+                        when(if (clone[i-1].logLevel != null) clone[i-1].logLevel else Log.LogLevel.INFO)
+                        {
+                            Log.LogLevel.VERBOSE -> color = Vec4(1.0,1.0,1.0,0.6)
+                            Log.LogLevel.INFO -> color = Vec4(1.0,1.0,1.0,0.8)
+                            Log.LogLevel.DEBUG -> color = Vec4(1.0,1.0,1.0,1.0)
+                            Log.LogLevel.WARN -> color = Vec4(1.0,1.0,0.0,1.0)
+                            Log.LogLevel.ERROR -> color = Vec4(1.0,0.0,0.0,1.0)
+                            Log.LogLevel.ASSERT -> color = Vec4(1.0,0.0,1.0,1.0)
+                        }
+                        imgui.textColored(color,clone[i-1].timestamp.toString() + " " + clone[i-1].logLevel + " " + clone[i-1].appName + " " + clone[i-1].message)
+
+                        if (logcatScrollingToBottom[0])
+                        {
+                            if (i == clone.size)
+                            {
+                                logcatScrollingKeepTimeStamp = clone[i - 1].timestamp
+                            }
+                            imgui.setScrollHere(1.0f)
+                        }else
+                        {
+                            if (clone[i-1].timestamp == logcatScrollingKeepTimeStamp)
+                            {
+                                hasNoMatchTimeStamp = false
+                                imgui.setScrollHere()
+                            }
+                        }
                     }
-                    imgui.textColored(color,clone[i-1].timestamp.toString() + " " + clone[i-1].logLevel + " " + clone[i-1].appName + " " + clone[i-1].message)
+                    if (!logcatScrollingToBottom[0] && hasNoMatchTimeStamp == true)
+                    {
+                        logcatScrollingKeepTimeStamp = clone[clone.size - 1].timestamp
+                    }
+                }else
+                {
+                    System.out.println("messages == null getting " + serialsList.get(currentGetLogDevice[0]) + " from serialLogsMap");
                 }
-                imgui.setScrollHere(1.0f)
             }else
             {
-                System.out.println("messages == null getting " + serialsList.get(currentGetLogDevice[0]) + " from serialLogsMap");
+                System.out.println("currentGetLogDevice Empty || serialsList size " + serialsList.size + " >= " + "currentGetLogDevice[0] " + currentGetLogDevice[0] + " + 1");
             }
-        }else
-        {
-            System.out.println("currentGetLogDevice Empty || serialsList size " + serialsList.size + " >= " + "currentGetLogDevice[0] " + currentGetLogDevice[0] + " + 1");
+            imgui.endChild()
         }
+        if (imgui.beginChild("logcat_panel_options",Vec2(imgui.currentWindow.size.x,40),true))
+        {
+            imgui.combo("Device",currentGetLogDevice,nameList)
+            imgui.endChild()
+        }
+
         imgui.end()
     }
 
