@@ -8,6 +8,7 @@ import glm_.vec2.Vec2i
 import glm_.vec4.Vec4
 import imgui.*
 import imgui.internal.Window
+import vkk.utf8
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -182,9 +183,10 @@ enum class GUIManager {
 
     private fun drawLogcatWindow(imgui: ImGui)
     {
+        val BottomBarHeight = 50
         if( imgui.begin("Logcat", logcatWindowShown, WindowFlag.MenuBar.i) )
         {
-            imgui.pushStyleVar(StyleVar.WindowMinSize,Vec2i(100,60))
+            imgui.pushStyleVar(StyleVar.WindowMinSize,Vec2i(100,50 + BottomBarHeight))
             var window : Window = imgui.currentWindow
             var devicesList : List<Device> = AdbManager.INSTANCE.devices
             var serialsList : List<String> = devicesList.stream().map { device -> device.serial }.collect(Collectors.toList())
@@ -196,7 +198,8 @@ enum class GUIManager {
                 imgui.checkbox("Scroll To Bottom",logcatScrollingToBottom,0)
                 imgui.endMenuBar()
             }
-            if (imgui.beginChild("logcat_panel_logs",Vec2(imgui.currentWindow.size.x,imgui.currentWindow.size.y - imgui.windowHeight - imgui.frameHeightWithSpacing / 2 - 40),true))
+            var topPanelVec = Vec2(imgui.currentWindow.contentsRegionRect.width,imgui.currentWindow.contentsRegionRect.height - imgui.currentWindow.windowPadding.y - BottomBarHeight)
+            if (imgui.isRectVisible(topPanelVec) && imgui.beginChild("logcat_panel_logs",topPanelVec,true))
             {
                 if (currentGetLogDevice.isNotEmpty() && serialsList.size >= currentGetLogDevice[0] + 1)
                 {
@@ -248,10 +251,11 @@ enum class GUIManager {
                 }
                 imgui.endChild()
             }
-            var bottomPanelVec : Vec2 = Vec2(imgui.currentWindow.size.x,40)
+            var bottomPanelVec : Vec2 = Vec2(imgui.currentWindow.contentsRegionRect.width,BottomBarHeight)
             if (imgui.isRectVisible(bottomPanelVec) && imgui.beginChild("logcat_panel_options",bottomPanelVec,false))
             {
                 imgui.combo("Device",currentGetLogDevice,nameList)
+                imgui.combo("Application", intArrayOf(0), arrayListOf("Skyline"))
                 imgui.endChild()
             }
 
