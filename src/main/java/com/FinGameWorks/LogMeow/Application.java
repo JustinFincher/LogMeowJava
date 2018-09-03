@@ -52,7 +52,7 @@ public class Application
             if (OSUtilities.isMac())
             {
                 pb.command("java", "-jar", "-XstartOnFirstThread", Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath(), "run");
-            }else
+            }else if (OSUtilities.isWindows())
             {
                 String path = Application.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 

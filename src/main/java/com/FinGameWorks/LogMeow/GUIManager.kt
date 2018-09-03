@@ -4,6 +4,7 @@ import com.android.ddmlib.Log
 import com.android.ddmlib.logcat.LogCatMessage
 import com.android.ddmlib.logcat.LogCatTimestamp
 import glm_.vec2.Vec2
+import glm_.vec2.Vec2i
 import glm_.vec4.Vec4
 import imgui.*
 import imgui.internal.Window
@@ -183,6 +184,7 @@ enum class GUIManager {
     {
         if( imgui.begin("Logcat", logcatWindowShown, WindowFlag.MenuBar.i) )
         {
+            imgui.pushStyleVar(StyleVar.WindowMinSize,Vec2i(100,60))
             var window : Window = imgui.currentWindow
             var devicesList : List<Device> = AdbManager.INSTANCE.devices
             var serialsList : List<String> = devicesList.stream().map { device -> device.serial }.collect(Collectors.toList())
@@ -246,13 +248,15 @@ enum class GUIManager {
                 }
                 imgui.endChild()
             }
-            if (imgui.beginChild("logcat_panel_options",Vec2(imgui.currentWindow.size.x,40),false))
+            var bottomPanelVec : Vec2 = Vec2(imgui.currentWindow.size.x,40)
+            if (imgui.isRectVisible(bottomPanelVec) && imgui.beginChild("logcat_panel_options",bottomPanelVec,false))
             {
                 imgui.combo("Device",currentGetLogDevice,nameList)
                 imgui.endChild()
             }
 
             imgui.end()
+            imgui.popStyleVar(1)
         }
     }
 
